@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- 动态方法调用 -->
+	<constant name="struts.enable.DynamicMethodInvocation" value="true"></constant>
+	<!-- 意味着默认开启开发者模式，devMode:devlementMode；即，可以随时调整文件，保存后即已默认加载了已变更内容。无需重启server或重新加载项目即可保存且展示变更 -->
+	<constant name="struts.DevMode" value="true"></constant>
+	
+	<package name="user" extends="struts-default">
+		<!-- 定义一个包含权限控制的拦截器 -->
+		<interceptors>
+			<interceptor name="LoginInterceptor" class="com.oracle.TeaMall.interceptor.LoginInterceptor"></interceptor>
+			<!-- 定义一个包含权限控制的拦截器栈 -->
+			<interceptor-stack name="loginStack">
+				<interceptor-ref name="defaultStack"/>
+				<interceptor-ref name="LoginInterceptor">
+					<!-- <param name="excludeMethods">login</param> -->
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+	
+		<!--  定义默认拦截器 
+		<default-interceptor-ref name="loginStack"/> -->
+		<!-- 定义拦截器处理结果 -->
+		<global-results>
+			<result name="illegalVisit">/login.jsp</result>
+		</global-results>
+	
+		<!-- 用户登录action -->
+		<action name="UserAction" class="com.oracle.TeaMall.action.UserAction">
+			<!-- 登录 -->
+			<!-- <result name="loginSuccess" type="chain">/UserAction!index.action</result> -->
+			<result name="fail">/login.jsp</result>
+			<result name="success">/index.jsp</result>
+			
+			<!-- 访问首页 -->
+			<result name="visitNormal">/index.jsp</result>
+			<result name="visitIllegal">/login.jsp</result>
+			
+			<!-- 在这里调用上面配置的拦截器 
+			<interceptor-ref name="sessionCheckInterceptor"></interceptor-ref>
+			调用了自己配置的拦截器以后，还要调用系统的拦截器，不然会出问题,调用了自己配置的拦截器以后不会去主动调用系统拦截器 -->
+			<!-- <interceptor-ref name="defaultStack"/>
+			<interceptor-ref name="LoginInterceptor"></interceptor-ref> -->
+			
+			<!-- <interceptor-ref name="loginStack"></interceptor-ref> -->
+		</action>
+		
+		
+		<!-- 验证码action -->
+		<action name="CodeAction" class="com.oracle.TeaMall.action.CodeAction"></action>
+		<!-- 与评论相关的action -->
+		<action name="CommentAction" class="com.oracle.TeaMall.action.CommentAction"></action>
+	</package>
+	
+	
+	<package name="tea" extends="struts-default"  namespace="/admin">
+				
+				<default-action-ref name="default"></default-action-ref>
+				<action name="default">
+				</action>
+				<action name="TeaAction" class="com.oracle.TeaMall.action.TeaAction">
+				</action>
+				
+		</package>
+		
+	
+</struts>
